@@ -42,9 +42,30 @@ class PIDController():
         # as well as self_prev_int_heading to track the integral term
         # self.prev_e_heading the previous error. But note that you
         # should be the one to update them also.
+        
+        # e = theta_ref - theta_curr
+        
+        # if e > np.pi:
+        #     e -= 2 * np.pi
+        # elif e < -np.pi:
+        #     e += 2 * np.pi
+        
+        e = np.arctan2(np.sin(theta_ref - theta_curr), np.cos(theta_ref - theta_curr))
+        # print()
+        # print("Theta ref:", theta_ref)
+        # print("Theta curr:", theta_curr)
+        # print("delta time:", delta_t)
+        # print("Error:", e)
+        # print(f"kp: {self.kp}, ki: {self.ki}, kd: {self.kd}")
+        
+        de = (e - self.prev_e_heading) / delta_t
+        
+        self.prev_int_heading += e * delta_t
+                
+        omega = self.kp * e + self.ki * self.prev_int_heading + self.kd * de
 
+        self.prev_e_heading = e 
         v = v_ref
-        omega = np.random.uniform(-8.0, 8.0)
         return v, omega
 
     def OffsetControl(self,
@@ -72,8 +93,19 @@ class PIDController():
         # as well as self_prev_int_offset to track the integral term
         # self.prev_e_offset the previous error. But note that you
         # should be the one to update them also.
+        
+        e = y_ref - y_curr
+        
+        if delta_t <= 0:
+            de = 0.0
+        else:
+            de = (e - self.prev_e_offset) / delta_t
+        
+        self.prev_int_offset += e * delta_t
+                
+        omega = self.kp * e + self.ki * self.prev_int_offset + self.kd * de
 
-        omega = np.random.uniform(-8.0, 8.0)
+        self.prev_e_offset = e 
         v = v_ref
         return v, omega
 
