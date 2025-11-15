@@ -43,14 +43,14 @@ class PIDController():
         # self.prev_e_heading the previous error. But note that you
         # should be the one to update them also.
         
-        # e = theta_ref - theta_curr
+        e = theta_ref - theta_curr
         
         # if e > np.pi:
         #     e -= 2 * np.pi
         # elif e < -np.pi:
         #     e += 2 * np.pi
         
-        e = np.arctan2(np.sin(theta_ref - theta_curr), np.cos(theta_ref - theta_curr))
+        # e = np.arctan2(np.sin(theta_ref - theta_curr), np.cos(theta_ref - theta_curr))
         # print()
         # print("Theta ref:", theta_ref)
         # print("Theta curr:", theta_curr)
@@ -63,6 +63,7 @@ class PIDController():
         self.prev_int_heading += e * delta_t
                 
         omega = self.kp * e + self.ki * self.prev_int_heading + self.kd * de
+
 
         self.prev_e_heading = e 
         v = v_ref
@@ -114,3 +115,8 @@ class PIDController():
         self.kp = kp
         self.ki = ki
         self.kd = kd
+        self.prev_e_heading = 0.0
+        self.prev_e_offset = 0.0
+        self.prev_int_heading = 0.0
+        self.prev_int_offset = 0.0
+        print("Resetting gains")
